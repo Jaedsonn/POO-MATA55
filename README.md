@@ -244,15 +244,6 @@ Define os possíveis estados de um veículo.
 - Não permite adicionar aluguel duplicado na lista do cliente
 - Valida status do carro antes de vincular
 
-## Como Visualizar o Diagrama
-
-O diagrama acima usa sintaxe Mermaid e pode ser visualizado:
-
-1. **GitHub/GitLab**: Renderização automática em arquivos README.md
-2. **VS Code**: Instale extensões como "Markdown Preview Mermaid Support"
-3. **Online**: Use o [Mermaid Live Editor](https://mermaid.live/)
-4. **Markdown Viewers**: Maioria dos visualizadores modernos suportam Mermaid
-
 ## Exemplo de Uso
 
 ```java
