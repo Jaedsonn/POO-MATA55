@@ -10,15 +10,15 @@ public class AluguelCarro {
     private LocalDate dataFinal;
     private LocalTime horarioRetirada;
     private LocalTime horarioDevolucao;
-    private CategoriaVeiculo categoria;
     private double quilometragemDiaria;
     private double valorLocacao;
+    private String numeroCartaoCredito;
     private Cliente cliente;
-
-    public AluguelCarro(CategoriaVeiculo categoria, String cidadeDestino, 
+    private Carro carro;
+    
+    public AluguelCarro(String cidadeDestino, 
                        LocalDate dataInicial, LocalDate dataFinal,
                        LocalTime horarioRetirada, LocalTime horarioDevolucao) {
-        this.categoria = categoria;
         this.cidadeDestino = cidadeDestino;
         this.dataInicial = dataInicial;
         this.dataFinal = dataFinal;
@@ -28,16 +28,44 @@ public class AluguelCarro {
         this.valorLocacao = 0.0;
     }
 
+    
     public AluguelCarro(CategoriaVeiculo categoria, String cidadeDestino,
-                       LocalDate dataInicial, LocalDate dataFinal,
-                       LocalTime horarioRetirada) {
-        this(categoria, cidadeDestino, dataInicial, dataFinal, horarioRetirada, horarioRetirada);
+    LocalDate dataInicial, LocalDate dataFinal,
+    LocalTime horarioRetirada) {
+        this( cidadeDestino, dataInicial, dataFinal, horarioRetirada, horarioRetirada);
+    }
+    
+    public AluguelCarro(CategoriaVeiculo categoria, String cidadeDestino,
+    LocalDate dataInicial, LocalDate dataFinal) {
+        this( cidadeDestino, dataInicial, dataFinal, LocalTime.MIDNIGHT, LocalTime.MIDNIGHT);
+    }
+    public void vincularCarro(Carro carro){
+        if(carro.getStatusCarro() != StatusCarro.DISPONIVEL){
+            throw new IllegalArgumentException("O carro não está disponível para aluguel.");
+        }
+        this.carro = carro;
+        this.carro.setStatusCarro(StatusCarro.ALUGADO);
+    }
+    public void vincularCliente(Cliente cliente){
+        if(cliente.getCartaoCredito() == null){
+            throw new IllegalArgumentException("O cliente não possui um cartão de crédito válido.");
+        }
+        this.cliente = cliente;
+        this.numeroCartaoCredito = cliente.getCartaoCredito().getNumeroCartao();
     }
 
-    public AluguelCarro(CategoriaVeiculo categoria, String cidadeDestino,
-                       LocalDate dataInicial, LocalDate dataFinal) {
-        this(categoria, cidadeDestino, dataInicial, dataFinal, LocalTime.MIDNIGHT, LocalTime.MIDNIGHT);
+    public void devolverCarro(){
+        if(this.carro != null){
+            this.carro.setStatusCarro(StatusCarro.DISPONIVEL);
+            this.carro = null;
+            this. cliente = null;
+            this.numeroCartaoCredito = null;
+            this.horarioDevolucao = null;
+            this.horarioRetirada = null;
+            this.valorLocacao = 0.0;
+        }
     }
+
 
     public long calcularQuantidadeDiarias() {
         long dias = ChronoUnit.DAYS.between(dataInicial, dataFinal);
@@ -50,12 +78,14 @@ public class AluguelCarro {
     }
 
     public double calcularValorLocacao() {
+        CategoriaVeiculo categoria = carro.getCategoria();
         long quantidadeDiarias = calcularQuantidadeDiarias();
         this.valorLocacao = quantidadeDiarias * categoria.getValorDiaria();
         return this.valorLocacao;
     }
 
     public double calcularValorLocacao(double quilometragemAdicional) {
+        CategoriaVeiculo categoria = carro.getCategoria();
         long quantidadeDiarias = calcularQuantidadeDiarias();
         double valorDiariaComAdicional = categoria.calcularValorDiariaComQuilometragemAdicional(quilometragemAdicional);
         this.valorLocacao = quantidadeDiarias * valorDiariaComAdicional;
@@ -69,7 +99,7 @@ public class AluguelCarro {
         if(quilometragemIlimitada != null && !quilometragemIlimitada.equalsIgnoreCase("ILIMITADA")) {
             throw new IllegalArgumentException("Parâmetro inválido para quilometragem ilimitada.");
         }
-
+        CategoriaVeiculo categoria = carro.getCategoria();
         long quantidadeDiarias = calcularQuantidadeDiarias();
         double valorDiariaIlimitada = categoria.calcularValorDiariaQuilometragemIlimitada();
         this.valorLocacao = quantidadeDiarias * valorDiariaIlimitada;
@@ -125,13 +155,6 @@ public class AluguelCarro {
         this.horarioDevolucao = horarioDevolucao;
     }
 
-    public CategoriaVeiculo getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(CategoriaVeiculo categoria) {
-        this.categoria = categoria;
-    }
 
     public double getQuilometragemDiaria() {
         return quilometragemDiaria;

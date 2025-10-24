@@ -108,23 +108,11 @@ O diagrama de classes acima está escrito em notação PlantUML. Para visualizar
 
    - [PlantUML Online Server](https://www.plantuml.com/plantuml/uml/)
    - [PlantText](https://www.planttext.com/)
-   - [PlantUML Editor](https://plantuml-editor.kkeisuke.com/)
 
-2. **VS Code**: Se estiver usando o Visual Studio Code, instale a extensão "PlantUML" e utilize a funcionalidade de pré-visualização:
-   - Instale a extensão "PlantUML" na área de extensões do VS Code
-   - Com o README aberto, pressione Alt+D (ou Option+D no Mac) para abrir a pré-visualização
+2. **VS Code**: Se estiver usando o Visual Studio Code, instale a extensão "PlantUML" e utilize a funcionalidade de pré-visualização.
 
-3. **Local**: Instale o [PlantUML](https://plantuml.com/download) localmente e renderize o diagrama usando a ferramenta de linha de comando:
-   ```bash
-   java -jar plantuml.jar README.md
-   ```
+3. **Local**: Instale o [PlantUML](https://plantuml.com/download) localmente e renderize o diagrama usando a ferramenta de linha de comando.
 
 ## Relação entre as Classes
 
 A classe `AluguelCarro` possui uma relação de associação com `CategoriaVeiculo`, onde cada aluguel está associado a uma categoria específica de veículo. A categoria determina o valor base da diária e as regras para cálculo de adicionais de quilometragem.
-
-## Detalhes de Implementação
-
-- **Sobrecarga de métodos**: A classe `AluguelCarro` utiliza sobrecarga nos construtores e no método `calcularValorLocacao()` para oferecer diferentes opções de configuração.
-- **Enum com comportamento**: O enum `CategoriaVeiculo` não apenas define constantes, mas também encapsula comportamentos relacionados à categoria através de métodos.
-- **Cálculo de diárias**: Considera não apenas as datas, mas também os horários de retirada e devolução.
