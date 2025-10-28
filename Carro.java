@@ -26,6 +26,17 @@ public class Carro{
         this.status = status;
     }
     
+    public String getModelo(){
+        return this.modelo;
+    }
+
+    public String getCor(){
+        return this.cor;
+    }
+
+    public String getPlaca(){
+        return this.placa;
+    }
 
 
 }

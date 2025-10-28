@@ -19,6 +19,14 @@ public class Cliente{
         this.cartaoCredito = new CartaoCredito(codigoSeguranca, mesValidade, anoValidade, numeroCartao);
     }
 
+    public String getNome(){
+        return this.nome;
+    }
+
+    public String getTelefone(){
+        return this.numeroTelefone;
+    }
+
     public CartaoCredito getCartaoCredito(){
         return this.cartaoCredito;
     }
@@ -33,5 +41,13 @@ public class Cliente{
         if(alugueis.contains(aluguel)){
             alugueis.remove(aluguel);
         }
+    }
+
+    public String getCpf(){
+        return this.cpf;
+    }
+
+    public void setCpf(String cpf){
+        this.cpf = cpf;
     }
 }

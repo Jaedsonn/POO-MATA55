@@ -66,6 +66,10 @@ public class AluguelCarro {
         }
     }
 
+    public String getNumeroCartao(){
+        return this.numeroCartaoCredito;
+    }
+
 
     public long calcularQuantidadeDiarias() {
         long dias = ChronoUnit.DAYS.between(dataInicial, dataFinal);
@@ -106,6 +110,14 @@ public class AluguelCarro {
         this.quilometragemDiaria = 0.0;
         
         return this.valorLocacao;
+    }
+
+    public Carro getCarro(){
+        return this.carro;
+    }
+
+    public Cliente getCliente(){
+        return this.cliente;
     }
 
     public double calcularQuilometragemTotal() {
