@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SistemaAluguel {
     private ArrayList<AluguelCarro> reservas;
@@ -94,4 +95,121 @@ public class SistemaAluguel {
     private void showMessage(String message){
         System.out.println(message);
     }
+
+    public void interfaceDeCadastro(){
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println(" Cadastro de Reserva de Carro ");
+        System.out.println("Escolha uma opção de cadastro: ");
+        System.out.println("1 - Cadastrar Cliente");
+        System.out.println("2 - Cadastrar Carro");
+        System.out.println("3 - Finalizar Sistema de Cadastro");
+
+        int opcao = sc.nextInt();
+        sc.nextLine();
+
+        while(opcao != 3){
+            switch(opcao){
+                case 1:
+                    cadastroCliente();
+                    break;
+                case 2:
+                    cadastroCarro();
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+
+            System.out.println("Escolha uma opção de cadastro: ");
+            System.out.println("1 - Cadastrar Cliente");
+            System.out.println("2 - Cadastrar Carro");
+            System.out.println("3 - Finalizar Sistema de Cadastro");
+
+            opcao = sc.nextInt();
+            sc.nextLine();
+        }
+    }
+
+    public void cadastroCarro(){
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println(" Cadastro de Carro ");
+        System.out.print("Modelo: ");
+        String modelo = sc.nextLine();
+
+        System.out.print("Cor: ");
+        String cor = sc.nextLine();
+
+        System.out.print("Placa: ");
+        String placa = sc.nextLine();
+
+        System.out.print("Categoria (1 - Econômica, 2 - Intermediária, 3 - Luxo): ");
+        int categoriaOpcao = sc.nextInt();
+        sc.nextLine();
+
+        CategoriaVeiculo categoria = null;
+        
+        while(categoria == null) {
+            switch (categoriaOpcao) {
+                case 1:
+                    categoria = CategoriaVeiculo.B;
+                    break;
+                case 2:
+                    categoria = CategoriaVeiculo.C;
+                    break;
+                case 3:
+                    categoria = CategoriaVeiculo.A;
+                    break;
+                default:
+                    categoriaOpcao = sc.nextInt();
+                    sc.nextLine();
+            }
+
+        Carro carro = new Carro(modelo, placa, categoria, cor);
+        System.out.println("Carro cadastrado com sucesso!");
+    }
+
+    return;
+  }
+
+  public void cadastroCliente(){
+    Scanner sc = new Scanner(System.in);
+
+    System.out.println(" Cadastro de Cliente ");
+    System.out.print("Nome: ");
+    String nome = sc.nextLine();
+
+    System.out.print("CPF: ");
+    String cpf = sc.nextLine();
+
+    System.out.print("Telefone: ");
+    String telefone = sc.nextLine();
+
+    Cliente cliente = new Cliente(nome, cpf, telefone);
+    System.out.println("Cliente cadastrado com sucesso!");
+
+    System.out.println("Deseja cadastrar o cartão de crédito agora? (s/n)");
+    String resposta = sc.nextLine();
+    if(resposta.equalsIgnoreCase("s")){
+        System.out.print("Número do Cartão: ");
+        String numeroCartao = sc.nextLine();
+        
+        System.out.print("Código de Segurança: ");
+        String codigoSeguranca = sc.nextLine();
+
+        System.out.print("Mês de Validade (MM): ");
+        int mesValidade = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Ano de Validade (AAAA): ");
+        int anoValidade = sc.nextInt();
+        sc.nextLine();
+
+        cliente.setCartaoCredito(numeroCartao, codigoSeguranca, mesValidade, anoValidade);
+        System.out.println("Cartão de crédito cadastrado com sucesso!");
+    } else {
+        System.out.println("Cadastro de cartão de crédito ignorado.");
+    }
+    System.out.println("Cadastro de cliente finalizado.");
+ }
 }
