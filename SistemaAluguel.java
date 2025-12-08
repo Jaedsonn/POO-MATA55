@@ -191,22 +191,25 @@ public class SistemaAluguel {
     System.out.println("Deseja cadastrar o cartão de crédito agora? (s/n)");
     String resposta = sc.nextLine();
     if(resposta.equalsIgnoreCase("s")){
-        System.out.print("Número do Cartão: ");
-        String numeroCartao = sc.nextLine();
-        
-        System.out.print("Código de Segurança: ");
-        String codigoSeguranca = sc.nextLine();
+        try {
+            System.out.print("Número do Cartão (16 dígitos): ");
+            String numeroCartao = sc.nextLine();
 
-        System.out.print("Mês de Validade (MM): ");
-        int mesValidade = sc.nextInt();
-        sc.nextLine();
+            System.out.print("Código de Segurança (3 dígitos): ");
+            String codigoSeguranca = sc.nextLine();
 
-        System.out.print("Ano de Validade (AAAA): ");
-        int anoValidade = sc.nextInt();
-        sc.nextLine();
+            System.out.print("Mês de Validade (MM): ");
+            int mesValidade = sc.nextInt();
 
-        cliente.setCartaoCredito(numeroCartao, codigoSeguranca, mesValidade, anoValidade);
-        System.out.println("Cartão de crédito cadastrado com sucesso!");
+            System.out.print("Ano de Validade (AAAA): ");
+            int anoValidade = sc.nextInt();
+            sc.nextLine(); 
+
+            cliente.setCartaoCredito(numeroCartao, codigoSeguranca, mesValidade, anoValidade);
+            System.out.println("Cartão de crédito cadastrado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao cadastrar o cartão de crédito: " + e.getMessage());
+        }
     } else {
         System.out.println("Cadastro de cartão de crédito ignorado.");
     }

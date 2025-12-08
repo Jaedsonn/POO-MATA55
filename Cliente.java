@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 public class Cliente{
     private String nome;
@@ -16,6 +17,13 @@ public class Cliente{
     }
     
     public void setCartaoCredito(String numeroCartao,String codigoSeguranca, int mesValidade, int anoValidade){
+        if(numeroCartao.length() < 16){
+            throw new IllegalArgumentException("Numero do cartao invalido");
+        } else if(mesValidade > 12){
+            throw new IllegalArgumentException("Mes de validade invalido");
+        } else if(anoValidade < LocalDate.now().getYear()){
+            throw new IllegalArgumentException("Ano de validade invalido");
+        }
         this.cartaoCredito = new CartaoCredito(codigoSeguranca, mesValidade, anoValidade, numeroCartao);
     }
 
