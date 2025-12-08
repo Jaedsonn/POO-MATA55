@@ -1,6 +1,15 @@
 # Sistema de Aluguel de Carros UFBAir
 
-Sistema completo de gestão de aluguel de carros desenvolvido em Java, com suporte a múltiplas categorias de veículos, gestão de clientes, reservas e consultas. Implementa o padrão Singleton para gerenciamento centralizado de todas as reservas do sistema.
+Sistema completo de gestão de aluguel de carros desenvolvido em Java, com suporte a múltiplas categorias de veículos, gestão de clientes, reservas e consultas. Implementa o padrão Singleton para gerenciamento centralizado de todas as reservas do sistema, incluindo uma interface interativa de cadastro via terminal.
+
+## 📋 Índice
+
+- [Diagrama de Classes](#diagrama-de-classes)
+- [Descrição das Classes](#descrição-das-classes)
+- [Funcionalidades do Sistema](#funcionalidades-do-sistema)
+- [Regras de Negócio](#regras-de-negócio-implementadas)
+- [Compilação e Execução](#compilação-e-execução)
+- [Exemplo de Uso](#exemplo-de-uso)
 
 ## Diagrama de Classes
 
@@ -15,6 +24,9 @@ classDiagram
         +adicionarReserva(aluguel)
         +buscaPorCpf(cpf)
         +buscaPorPlaca(placa)
+        +interfaceDeCadastro()
+        +cadastroCarro()
+        +cadastroCliente()
     }
 
     class Cliente {
@@ -28,6 +40,7 @@ classDiagram
         +getCartaoCredito() CartaoCredito
         +getNome() String
         +getCpf() String
+        +setCpf(cpf)
         +getTelefone() String
         +adicionarAluguel(aluguel)
         +removerAluguel(aluguel)
@@ -50,7 +63,7 @@ classDiagram
     }
 
     class AluguelCarro {
-        -static double QUILOMETRAGEM_DIARIA_PADRAO
+        -static final double QUILOMETRAGEM_DIARIA_PADRAO
         -String cidadeDestino
         -LocalDate dataInicial
         -LocalDate dataFinal
@@ -62,6 +75,8 @@ classDiagram
         -Cliente cliente
         -Carro carro
         +AluguelCarro(cidadeDestino, dataInicial, dataFinal, horarioRetirada, horarioDevolucao)
+        +AluguelCarro(categoria, cidadeDestino, dataInicial, dataFinal, horarioRetirada)
+        +AluguelCarro(categoria, cidadeDestino, dataInicial, dataFinal)
         +vincularCarro(carro)
         +vincularCliente(cliente)
         +devolverCarro()
@@ -73,14 +88,15 @@ classDiagram
         +getCliente() Cliente
         +getCarro() Carro
         +getNumeroCartao() String
+        +getters/setters...
     }
 
     class Carro {
         -String modelo
         -String placa
-        -String cor
         -CategoriaVeiculo categoria
         -StatusCarro status
+        -String cor
         +Carro(modelo, placa, categoria, cor)
         +getCategoria() CategoriaVeiculo
         +getStatusCarro() StatusCarro
@@ -117,7 +133,7 @@ classDiagram
     }
 
     SistemaAluguel "1" o-- "0..*" AluguelCarro : gerencia
-    Cliente "1" *-- "1" CartaoCredito : possui
+    Cliente "1" *-- "0..1" CartaoCredito : possui
     Cliente "1" o-- "0..*" AluguelCarro : realiza
     AluguelCarro "0..*" --> "1" Cliente : vinculado a
     AluguelCarro "0..*" --> "1" Carro : aluga
@@ -129,7 +145,7 @@ classDiagram
 
 ### Classe `SistemaAluguel` (Singleton)
 
-Classe responsável por gerenciar todas as reservas do sistema de forma centralizada.
+Classe responsável por gerenciar todas as reservas do sistema de forma centralizada, incluindo uma interface interativa para cadastro de clientes e veículos.
 
 **Padrão de Design:** Singleton - garante que existe apenas uma instância do sistema, concentrando todas as reservas em um único local.
 
@@ -142,11 +158,15 @@ Classe responsável por gerenciar todas as reservas do sistema de forma centrali
 - `adicionarReserva()`: Adiciona uma nova reserva ao sistema
 - `buscaPorCpf()`: Busca e exibe todas as reservas de um cliente pelo CPF
 - `buscaPorPlaca()`: Busca e exibe a reserva de um veículo pela placa
+- `interfaceDeCadastro()`: Interface interativa via terminal para cadastro
+- `cadastroCliente()`: Cadastro de cliente com opção de cartão de crédito
+- `cadastroCarro()`: Cadastro de veículo com seleção de categoria
 
 **Características:**
 - Construtor privado impede criação de múltiplas instâncias
 - Método `getInstance()` garante acesso controlado à instância única
 - Centraliza todas as operações de consulta do sistema
+- Interface de menu interativo para cadastro
 
 ### Classe `Cliente`
 
@@ -160,12 +180,18 @@ Representa um cliente do sistema de aluguel.
 - `alugueis`: Lista de aluguéis realizados pelo cliente
 
 **Métodos principais:**
-- `setCartaoCredito()`: Cadastra ou atualiza o cartão de crédito do cliente
+- `setCartaoCredito()`: Cadastra ou atualiza o cartão de crédito do cliente (com validações)
 - `adicionarAluguel()`: Adiciona um aluguel à lista (verifica duplicatas)
 - `removerAluguel()`: Remove um aluguel da lista
+- `setCpf()`: Permite alterar o CPF do cliente
+
+**Validações implementadas:**
+- Número do cartão deve ter no mínimo 16 caracteres
+- Mês de validade deve ser válido (≤ 12)
+- Ano de validade não pode ser anterior ao ano atual
 
 **Relacionamentos:**
-- Possui um CartaoCredito (composição 1:1)
+- Possui um CartaoCredito (composição 0..1)
 - Realiza vários AluguelCarro (agregação 1:N)
 
 ### Classe `CartaoCredito`
@@ -187,7 +213,7 @@ Representa o cartão de crédito do cliente.
 Classe central que representa uma reserva/aluguel de veículo.
 
 **Atributos:**
-- `QUILOMETRAGEM_DIARIA_PADRAO`: Constante 200.0 km
+- `QUILOMETRAGEM_DIARIA_PADRAO`: Constante final 200.0 km
 - `cidadeDestino`: Cidade de retirada do veículo
 - `dataInicial`, `dataFinal`: Período do aluguel
 - `horarioRetirada`, `horarioDevolucao`: Horários de retirada e devolução
@@ -197,18 +223,24 @@ Classe central que representa uma reserva/aluguel de veículo.
 - `cliente`: Cliente que realizou a reserva
 - `carro`: Veículo alugado
 
+**Construtores:**
+- Construtor completo com todos os parâmetros de data e horário
+- Construtor com horário único (mesmo horário para retirada e devolução)
+- Construtor básico com apenas datas (usa horário meia-noite)
+
 **Métodos principais:**
 - `vincularCarro()`: Vincula um carro disponível ao aluguel (altera status para ALUGADO)
 - `vincularCliente()`: Vincula o cliente e armazena número do cartão
 - `devolverCarro()`: Finaliza o aluguel e libera o carro (status DISPONIVEL)
 - `calcularQuantidadeDiarias()`: Calcula dias considerando horários
 - `calcularValorLocacao()`: 3 versões (padrão, com km adicional, ilimitada)
-- `calcularQuilometragemTotal()`: Retorna km total permitida
+- `calcularQuilometragemTotal()`: Retorna km total permitida (infinito para ilimitada)
 
 **Regras de negócio:**
 - Só aceita carros com status DISPONIVEL
 - Cliente precisa ter cartão cadastrado
 - Horário devolução após retirada conta como diária extra
+- Quilometragem ilimitada retorna `Double.POSITIVE_INFINITY`
 
 ### Classe `Carro`
 
@@ -271,7 +303,28 @@ Define os possíveis estados de um veículo.
 
 ## Funcionalidades do Sistema
 
-### 1. Consulta por CPF
+### 1. Interface de Cadastro Interativa
+
+O sistema oferece uma interface de menu via terminal para cadastro de clientes e veículos.
+
+**Opções do menu:**
+1. Cadastrar Cliente
+2. Cadastrar Carro
+3. Finalizar Sistema de Cadastro
+
+**Cadastro de Cliente:**
+- Nome completo
+- CPF
+- Telefone
+- Cartão de crédito (opcional, com validações)
+
+**Cadastro de Carro:**
+- Modelo
+- Cor
+- Placa
+- Categoria (Econômica/B, Intermediária/C, Luxo/A)
+
+### 2. Consulta por CPF
 Permite buscar todas as reservas de um cliente informando o CPF.
 
 **Informações exibidas:**
@@ -281,7 +334,7 @@ Permite buscar todas as reservas de um cliente informando o CPF.
   - Dados do veículo (modelo, cor, placa, categoria)
   - Dados da reserva (datas, horários, valor)
 
-### 2. Consulta por Placa
+### 3. Consulta por Placa
 Permite localizar em qual reserva está um determinado veículo.
 
 **Informações exibidas:**
@@ -290,7 +343,7 @@ Permite localizar em qual reserva está um determinado veículo.
 - Dados da reserva (datas, horários, valor)
 - Nota: NÃO exibe número do cartão (diferente da busca por CPF)
 
-### 3. Controle de Reservas
+### 4. Controle de Reservas
 - Sistema armazena todas as reservas realizadas
 - Cliente pode realizar múltiplas reservas
 - Veículo pode ser alugado múltiplas vezes (em períodos diferentes)
@@ -320,8 +373,14 @@ Permite localizar em qual reserva está um determinado veículo.
 
 ## Exemplo de Uso
 
-```java
-## Exemplo de Uso
+### Via Interface Interativa (Main)
+
+```bash
+java Main
+# Siga as instruções do menu para cadastrar clientes e carros
+```
+
+### Via Código (Programático)
 
 ```java
 // Obter instância do sistema (Singleton)
@@ -349,8 +408,8 @@ cliente.adicionarAluguel(aluguel);
 // Adicionar ao sistema
 sistema.adicionarReserva(aluguel);
 
-// Calcular valor (3 diárias de categoria C)
-double valor = aluguel.calcularValorLocacao(); // 4 x R$ 150 = R$ 600
+// Calcular valor (4 diárias de categoria C = 4 x R$ 150)
+double valor = aluguel.calcularValorLocacao(); // R$ 600,00
 
 // Buscar reservas do cliente
 sistema.buscaPorCpf("123.456.789-00");
@@ -368,8 +427,18 @@ aluguel.devolverCarro(); // Status do carro volta para DISPONIVEL
 # Compilar todas as classes
 javac *.java
 
-# Executar o programa de testes
+# Executar o programa principal (abre interface de cadastro interativa)
 java Main
+```
+
+### Saída esperada ao executar:
+
+```
+ Cadastro de Reserva de Carro 
+Escolha uma opção de cadastro: 
+1 - Cadastrar Cliente
+2 - Cadastrar Carro
+3 - Finalizar Sistema de Cadastro
 ```
 
 ## Requisitos Implementados
@@ -419,6 +488,9 @@ O sistema implementa 100% dos requisitos dos três exercícios incrementais:
 ## Validações Implementadas
 
 - Cliente precisa ter cartão cadastrado para reservar
+- Número do cartão deve ter no mínimo 16 caracteres
+- Mês de validade deve ser válido (≤ 12)
+- Ano de validade não pode ser anterior ao ano atual
 - Apenas carros com status DISPONIVEL podem ser alugados
 - Status do carro é alterado automaticamente ao alugar/devolver
 - Verificação de duplicatas ao adicionar aluguel ao cliente
@@ -429,15 +501,21 @@ O sistema implementa 100% dos requisitos dos três exercícios incrementais:
 ## Estrutura de Arquivos
 
 ```
-incremental/
-├── AluguelCarro.java       # Classe principal de reserva
+POO-MATA55/
+├── AluguelCarro.java       # Classe principal de reserva (180 linhas)
 ├── Carro.java              # Classe de veículo
 ├── CartaoCredito.java      # Classe de cartão de crédito
-├── CategoriaVeiculo.java   # Enum de categorias
-├── Cliente.java            # Classe de cliente
-├── Main.java               # Programa de testes
+├── CategoriaVeiculo.java   # Enum de categorias com comportamento
+├── Cliente.java            # Classe de cliente com validações
+├── Main.java               # Programa principal (interface interativa)
+├── package.bluej           # Configuração do BlueJ
 ├── README.md               # Este arquivo
-├── SistemaAluguel.java     # Gerenciador do sistema (Singleton)
+├── SistemaAluguel.java     # Gerenciador do sistema (Singleton, 218 linhas)
 └── StatusCarro.java        # Enum de status do carro
 ```
-```
+
+---
+
+## 👥 Autor
+
+Desenvolvido como parte da disciplina **POO - MATA55** da **UFBA** (Universidade Federal da Bahia).
