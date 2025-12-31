@@ -7,7 +7,7 @@ public class Cliente{
     private String numeroTelefone;
     private CartaoCredito cartaoCredito;
     private ArrayList<AluguelCarro> alugueis;
-    
+    private ArrayList<PassagemAerea> passagens;
     
     public Cliente(String nome, String cpf, String numeroTelefone){
         this.nome = nome;
@@ -55,7 +55,27 @@ public class Cliente{
         return this.cpf;
     }
 
+    public ArrayList<AluguelCarro> getAlugueis(){
+        return this.alugueis;
+    }
+
     public void setCpf(String cpf){
         this.cpf = cpf;
+    }
+
+    public ArrayList<PassagemAerea> getPassagens(){
+        return this.passagens;
+    }
+
+    public void adicionarPassagem(PassagemAerea passagem){
+        if(!this.passagens.contains(passagem)){
+            this.passagens.add(passagem);
+        }
+    }
+
+    public void removerPassagem(PassagemAerea passagem){
+        if(this.passagens.contains(passagem)){
+            this.passagens.remove(passagem);
+        }
     }
 }

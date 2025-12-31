@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class SistemaAluguel {
+public class SistemaAluguel implements ISistema {
     private ArrayList<AluguelCarro> reservas;
     private static SistemaAluguel instance;
 
@@ -215,4 +215,26 @@ public class SistemaAluguel {
     }
     System.out.println("Cadastro de cliente finalizado.");
  }
+
+ @Override
+ public void emitirNotaFiscal(Cliente cliente) {
+    ArrayList<AluguelCarro> alugueis = cliente.getAlugueis();
+    System.out.println("\n=== NOTA FISCAL DE ALUGUEL DE CARRO ===");
+    System.out.println("Cliente: " + cliente.getNome());
+    System.out.println("CPF: " + cliente.getCpf());
+    System.out.println("Telefone: " + cliente.getTelefone());
+    System.out.println("----------------------------------------");
+    
+    for(AluguelCarro aluguel: alugueis){
+        System.out.println("Carro Alugado: " + aluguel.getCarro().getModelo() + " - Placa: " + aluguel.getCarro().getPlaca());
+        System.out.println("Data Inicial: " + aluguel.getDataInicial());
+        System.out.println("Data Final: " + aluguel.getDataFinal());
+        System.out.println("Horário Retirada: " + aluguel.getHorarioRetirada());
+        System.out.println("Horário Devolução: " + aluguel.getHorarioDevolucao());
+        System.out.println("Valor Total do Aluguel: R$ " + aluguel.getValorLocacao());
+        System.out.println("========================================\n");
+    }
+
+ }
+
 }

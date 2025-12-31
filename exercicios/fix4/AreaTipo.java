@@ -1,0 +1,4 @@
+enum AreaTipo {
+    URBANA,
+    RURAL
+}
